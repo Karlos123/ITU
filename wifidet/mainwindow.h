@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QListView>
+#include <QtGui>
 
 namespace Ui {
 class MainWindow;
@@ -20,8 +22,19 @@ private slots:
 
     void on_btnPause_clicked();
 
+    void on_actionOptions_triggered();
+
+
+
+    void on_speedSlider_sliderMoved(int position);
+
+    void getWifis();
+
 private:
     Ui::MainWindow *ui;
 };
+
+
+
 
 #endif // MAINWINDOW_H
