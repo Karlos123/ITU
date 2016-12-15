@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "parsers.h"
+#include "wifilist.h"
+#include "impexp.h"
 #include <QApplication>
 #include <string>
 #include <iostream>
@@ -33,7 +35,7 @@ MainWindow::~MainWindow()
 /* Detekce a vypis wifi siti */
 void MainWindow::getWifis(){
     QProcess p;
-    QList <struct wifiInfo> l;
+    QList <struct wifiInfo> a;
     std::string out; // Zprava na vypsani
 
     ui->textBrowser->clear(); // Vycisteni okna
@@ -53,18 +55,21 @@ void MainWindow::getWifis(){
       p.start("sudo", QStringList() << "iwlist" << "scan");
       p.waitForFinished();
       if(p.exitCode()){
-        ; // nema superuser opravnenia, nezadal heslo, whatever, moze sa ist .........
+        return; // nema superuser opravnenia, nezadal heslo, whatever, moze sa ist .........
       }
-      getNetworks_iwlist(p, l);
+      getNetworks_iwlist(p, a);
     }
     else{
-      getNetworks_nmcli(p, l);
+      getNetworks_nmcli(p, a);
     }
 
+    updateWifiList(l, a);
+    exportData(l);
+
     // Vypis dostupnych wifi
-    foreach(wifiInfo_t net, l){
-        out = "Name: " + std::string(net.SSID) + "\n" + "BSSID: " +net.BSSID + "\n" +
-                "Channel: " +std::to_string((int) net.channel) + "\n" +  "Siganl strength: " +std::to_string((int) net.signal) + "\n";
+    foreach(allWifiInfo_t net, l){
+        out = "Name: " + std::string(net.id.SSID) + "\n" + "BSSID: " +net.id.BSSID + "\n" +
+                "Channel: " +std::to_string((int) net.i.channel) + "\n" +  "Siganl strength: " +std::to_string((int) net.i.signal) + "\n";
         ui->textBrowser->append(out.c_str());
     }
 
@@ -106,6 +111,9 @@ void MainWindow::on_btnPause_clicked()
 
 
 
+void MainWindow::on_actionOptions_triggered(){
+
+}
 
 
 

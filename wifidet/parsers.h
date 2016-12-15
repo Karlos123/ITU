@@ -2,14 +2,7 @@
 #define PARSERS_H
 
 #include <QProcess>
-
-typedef struct wifiInfo {
-  char SSID[33];  // Nazov WiFi
-  char BSSID[18]; // MAC -- nema zmysel ich prekladat do normalnej 6bajtovej podoby, aj tak to len vypiseme
-  char channel;   // Cislo kanalu
-  char signal;    // Sila signalu
-  //bool active;
-} wifiInfo_t;
+#include "wifilist.h"
 
 // Parsovanie vystupu z nmcli
 int getNetworks_nmcli(QProcess &p, QList<wifiInfo_t> &l);

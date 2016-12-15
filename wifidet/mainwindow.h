@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QListView>
 #include <QtGui>
+#include "wifilist.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +33,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QList <struct allWifiInfo> l;
 };
 
 
