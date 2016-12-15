@@ -29,7 +29,7 @@ void updateWifiInfo(allWifiInfo_t &le){
 
 // Aktualizuje plny zoznam sieti podla zoznamu aktualne dostupnych sieti
 int updateWifiList(QList<allWifiInfo_t> &l, QList<wifiInfo_t> &a){
-  foreach(allWifiInfo_t& le, l){
+  foreach(allWifiInfo_t le, l){
     bool u = false;
     foreach(wifiInfo_t ae, a){
       if(isSameWifi(le, ae)){
