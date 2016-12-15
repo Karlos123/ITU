@@ -38,6 +38,9 @@ void MainWindow::getWifis(){
     QList <struct wifiInfo> a;
     std::string out; // Zprava na vypsani
 
+    // \/ vlozit do konstruktoru?
+    //QList<allWifiInfo_t> *lul = importData();
+    //delete lul;
     ui->textBrowser->clear(); // Vycisteni okna
 
     // Vypsani hlavicky vypisu
@@ -64,7 +67,7 @@ void MainWindow::getWifis(){
     }
 
     updateWifiList(l, a);
-    exportData(l);
+    //exportData(l);
 
     // Vypis dostupnych wifi
     foreach(allWifiInfo_t net, l){

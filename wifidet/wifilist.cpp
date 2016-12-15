@@ -29,16 +29,13 @@ void updateWifiInfo(allWifiInfo_t &le){
 
 // Aktualizuje plny zoznam sieti podla zoznamu aktualne dostupnych sieti
 int updateWifiList(QList<allWifiInfo_t> &l, QList<wifiInfo_t> &a){
-  foreach(allWifiInfo_t le, l){
+
+  for(allWifiInfo_t &le : l){
     bool u = false;
     foreach(wifiInfo_t ae, a){
       if(isSameWifi(le, ae)){
         u = true;
-        //qDebug() << "S";
-        //qDebug() << QDateTime::currentDateTime();
-        //qDebug() << le.t.last;
         updateWifiInfo(le, ae);
-        //qDebug() << le.t.last;
         break;
       }
     }
@@ -52,9 +49,8 @@ int updateWifiList(QList<allWifiInfo_t> &l, QList<wifiInfo_t> &a){
 
   foreach(wifiInfo_t ae, a){
     bool u = false;
-    foreach(allWifiInfo_t le, l){
+    for(allWifiInfo_t &le : l){
       if(isSameWifi(le, ae)){
-        //qDebug("W");
         u = true;
         break;
       }

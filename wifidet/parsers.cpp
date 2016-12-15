@@ -46,7 +46,7 @@ int getNetworks_iwlist(QProcess &p, QList<wifiInfo_t> &l){
       w.i.signal = 0;
     else
       w.i.signal = (signaldBm+95)*2;
-    // vysledok v porovnani s nmcli je +-2%
+    // vysledok v porovnani s nmcli je +-2% signalu
 
     int essidpos = row.indexOf("ESSID:\"")+7;
     buffer = row.mid(essidpos, row.indexOf('"', essidpos)-essidpos);
