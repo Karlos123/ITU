@@ -31,6 +31,10 @@ private slots:
 
     void getWifis();
 
+    void on_btnSave_pressed();
+
+    void on_btnSave_clicked();
+
 private:
     Ui::MainWindow *ui;
     QList <struct allWifiInfo> l;

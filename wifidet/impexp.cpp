@@ -1,10 +1,11 @@
 #include "impexp.h"
 #include <QDebug>
 
-QList<allWifiInfo_t>* importData(QString filename){
-  QList<allWifiInfo_t> *l = new QList<allWifiInfo_t>();
+QList<allWifiInfo_t> importData(QString filename){
+  QList<allWifiInfo_t> l;// = new QList<allWifiInfo_t>();
   QFile file(filename);
-  file.open(QIODevice::ReadOnly);
+  if(!file.open(QIODevice::ReadOnly))
+    return l; // Neda sa nacitat subor, technicky by sa to dalo nejak signalizovat
   QXmlStreamReader x(&file);
   allWifiInfo_t current;
   while(!x.atEnd()){
@@ -35,7 +36,7 @@ QList<allWifiInfo_t>* importData(QString filename){
         }
 
         x.readNext(); // uzatvorenie
-        wifiListInsert(*l, current);
+        wifiListInsert(l, current);
       }
       else{
         if(x.name() == "" && x.readElementText() == "")
@@ -48,8 +49,9 @@ QList<allWifiInfo_t>* importData(QString filename){
     }
   }
   if(x.hasError()){
-    delete l;
-    return nullptr;
+    //delete l;
+    //return QList<all;
+    l.clear();
   }
   /*
   foreach(allWifiInfo_t a, *l){
@@ -62,7 +64,8 @@ QList<allWifiInfo_t>* importData(QString filename){
 
 int exportData(QList<allWifiInfo_t> &l, QString filename){
   QFile file(filename);
-  file.open(QIODevice::WriteOnly);
+  if(!file.open(QIODevice::WriteOnly))
+    return 1;
   QXmlStreamWriter x(&file);
   x.setAutoFormatting(true);
   x.writeStartDocument();

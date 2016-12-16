@@ -6,8 +6,8 @@
 #include <QFile>
 #include "wifilist.h"
 
-QList<allWifiInfo_t>* importData(QString filename = ".wifidetHistory");
+QList<allWifiInfo_t> importData(QString filename = ".wifidetHistory.xml");
 
-int exportData(QList<allWifiInfo_t> &l, QString filename = ".wifidetHistory");
+int exportData(QList<allWifiInfo_t> &l, QString filename = ".wifidetHistory.xml");
 
 #endif // IMPEXP_H

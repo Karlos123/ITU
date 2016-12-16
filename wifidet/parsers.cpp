@@ -7,6 +7,8 @@ int getNetworks_nmcli(QProcess &p, QList<wifiInfo_t> &l){
   l.clear();
   QString o = p.readAllStandardOutput();
   QStringList nets = o.split('\n', QString::SkipEmptyParts);
+  if(!nets.size())
+    return 0;
   nets.removeFirst();
   foreach(QString row, nets){
     QString buffer = row.section(' ', 0, 0, QString::SectionSkipEmpty);
@@ -31,12 +33,16 @@ int getNetworks_iwlist(QProcess &p, QList<wifiInfo_t> &l){
   l.clear();
   QString o = p.readAllStandardOutput();
   QStringList nets = o.split("Cell ", QString::SkipEmptyParts);
+  if(!nets.size())
+    return 0;
   nets.removeFirst();
   foreach(QString row, nets){
     wifiInfo_t w;
     QString buffer = row.mid(row.indexOf("Address: ")+9, 17);
     strcpy(w.id.BSSID, buffer.toStdString().data());
-    buffer = row.mid(row.indexOf("Channel:")+8, 2);
+    buffer = row.mid(row.indexOf("Channel:")+8, 3);
+    if(buffer[2] == ')')
+      buffer[2] = 0;
     w.i.channel = buffer.simplified().toUInt();
     buffer = row.mid(row.indexOf("Signal level=")+13, 3);
     int signaldBm = buffer.toInt();

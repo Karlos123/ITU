@@ -10,7 +10,7 @@
 #include <QMenuBar>
 #include <unistd.h>
 #include <QTimer>
-
+#include <QFileDialog>
 
 int interval = 15; // Casovy usek mezi jednotlivymi detekcemi wifi siti
 QTimer *timer;
@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    l = importData();
     ui->setupUi(this);
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(getWifis()));
@@ -113,11 +114,27 @@ void MainWindow::on_btnPause_clicked()
 }
 
 
+void MainWindow::on_btnSave_clicked()
+{
 
-void MainWindow::on_actionOptions_triggered(){
+  QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save History..."), ".wifidetHistory.xml", tr("XML Files (*.xml)")); // ;;All Files(*.*)
 
+  // Aktualne to dookola ponuka ulozenie hry kym sa ju nepodari ulozit, alebo uzivatel neda Cancel
+  if(fileName.isNull()){
+    return;
+  }
+  else{
+    if(!fileName.endsWith(".xml"))
+      fileName += ".xml";
+    if(exportData(l,fileName)){ // Nedalo sa ulozit hru or sth
+        on_btnSave_clicked();
+    }
+  }
 }
 
+void MainWindow::on_actionOptions_triggered(){}
+
+void MainWindow::on_btnSave_pressed(){}
 
 
 /* Zmena velikosti intervalu detekce wifi siti */
