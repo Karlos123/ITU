@@ -1,5 +1,5 @@
 #include "impexp.h"
-#include <QDebug>
+//#include <QDebug>
 
 QList<allWifiInfo_t> importData(QString filename){
   QList<allWifiInfo_t> l;// = new QList<allWifiInfo_t>();
@@ -36,6 +36,7 @@ QList<allWifiInfo_t> importData(QString filename){
         }
 
         x.readNext(); // uzatvorenie
+        current.i.signal = current.i.channel = 0;
         wifiListInsert(l, current);
       }
       else{
@@ -59,6 +60,8 @@ QList<allWifiInfo_t> importData(QString filename){
     qDebug() << a.t.first << " " << a.t.last;
   }
   */
+
+  qSort(l.begin(), l.end(), sortAWLf);
   return l;
 }
 

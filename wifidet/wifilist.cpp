@@ -10,13 +10,13 @@ int isSameWifi(allWifiInfo_t le, wifiInfo_t ae){
 }
 
 // Funkcia pre usporiadanie listu typu allWifiInfo_t quicksortom (dalo by sa to prerobit na sablonu)
-int moreThan(allWifiInfo_t &a, allWifiInfo_t &b){
+int sortAWLf(allWifiInfo_t &a, allWifiInfo_t &b){
   if(a.i.signal > 0 || b.i.signal > 0) // 1. signal (viac = lepsie)
     return a.i.signal > b.i.signal;
-  else if(a.t.last != b.t.last)        // 2. cas kedy boli naposledy videne (viac = lepsie)
+  if(a.t.last != b.t.last)        // 2. cas kedy boli naposledy videne (viac = lepsie)
     return a.t.last > b.t.last;
-  else if(strcmp(a.id.SSID,b.id.SSID)) // 3. SSID (abecedne, viac = horsie)
-    return strcmp(a.id.SSID,b.id.SSID) > 0;
+  if(strcmp(a.id.SSID,b.id.SSID)) // 3. SSID (abecedne, viac = horsie)
+    return strcmp(a.id.SSID,b.id.SSID) < 0;
   return strcmp(a.id.BSSID,b.id.BSSID) < 0; // 4. BSSID
 
 }
@@ -52,7 +52,7 @@ int updateWifiList(QList<allWifiInfo_t> &l, QList<wifiInfo_t> &a){
       updateWifiInfo(le);
   }
 
-  qSort(l.begin(), l.end(), moreThan);
+  qSort(l.begin(), l.end(), sortAWLf);
 
   foreach(wifiInfo_t ae, a){
     bool u = false;

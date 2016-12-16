@@ -16,6 +16,11 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    QMenu *networksMenu;
+    QMenu *aboutMenu;
+    QAction *importAct;
+    QAction *clearAct;
+    QAction *aboutAct;
     ~MainWindow();
 
 private slots:
@@ -41,9 +46,15 @@ private slots:
 
     void on_listWidget_itemSelectionChanged();
 
+    void importNetworks();
+    void clearNetworks();
+    void about();
+
 private:
     Ui::MainWindow *ui;
     QList <struct allWifiInfo> l;
+    void createActions();
+    void createMenus();
 };
 
 

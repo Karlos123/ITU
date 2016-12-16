@@ -56,6 +56,7 @@ int wifiListInsert(QList<T> &l, T w){
   return 0;
 }
 
+int sortAWLf(allWifiInfo_t &a, allWifiInfo_t &b);
 int updateWifiList(QList<allWifiInfo_t> &l, QList<wifiInfo_t> &a);
 
 #endif // WIFILIST_H

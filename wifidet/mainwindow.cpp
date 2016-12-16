@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <QTimer>
 #include <QFileDialog>
+#include <QMessageBox>
 
 int interval = 15; // Casovy usek mezi jednotlivymi detekcemi wifi siti
 QTimer *timer;
@@ -24,6 +25,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     l = importData();
     ui->setupUi(this);
+
+    createActions();
+    createMenus();
+
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(getWifis()));
     ui->widget->hide();
@@ -32,6 +37,59 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::importNetworks(){
+  QMessageBox::information(this, tr("Import"),
+          tr("Importing the list of networks removes\ncurrently recorded networks."));
+
+  QString fileName = QFileDialog::getOpenFileName(NULL, tr("Import networks..."), ".wifidetHistory.xml", tr("XML Files (*.xml)"));
+
+  if(fileName.isNull())
+    return;
+  l = importData(fileName);
+  actualizeList();
+  ui->textBrowser->hide();
+}
+
+void MainWindow::clearNetworks(){
+  QMessageBox::StandardButton reply;
+  reply = QMessageBox::question(this, "Clear networks", "Are you sure you want to\n clear the list of networks?",
+                                QMessageBox::No|QMessageBox::Yes);
+  if (reply == QMessageBox::Yes) {
+    l.clear();
+    ui->listWidget->clear();
+    ui->textBrowser->hide();
+  }
+}
+
+void MainWindow::about(){
+  QMessageBox::about(this, tr("About..."),
+          tr("Nejaky <b>shitpost</b> o autoroch, projekte etc."));
+}
+
+void MainWindow::createActions(){
+  importAct = new QAction(tr("&Import..."), this);
+  importAct->setStatusTip(tr("Import a list of previously saved networks"));
+  connect(importAct, &QAction::triggered, this, &MainWindow::importNetworks);
+
+  clearAct = new QAction(tr("&Clear list"), this);
+  clearAct->setStatusTip(tr("Remove all networks from the list"));
+  connect(clearAct, &QAction::triggered, this, &MainWindow::clearNetworks);
+
+  aboutAct = new QAction(tr("&About"), this);
+  aboutAct->setStatusTip(tr("Show the application's About box"));
+  connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
+}
+
+
+void MainWindow::createMenus(){
+  networksMenu = menuBar()->addMenu(tr("&Networks"));
+  networksMenu->addAction(importAct);
+  networksMenu->addAction(clearAct);
+
+  aboutMenu = menuBar()->addMenu(tr("&About"));
+  aboutMenu->addAction(aboutAct);
 }
 
 void MainWindow::actualizeList(){
@@ -46,6 +104,14 @@ void MainWindow::actualizeList(){
     i->setText(QString(a.id.SSID) + "\n  (" + QString(a.id.BSSID) + ")");
     i->setToolTip(a.id.SSID);
     i->setWhatsThis(a.id.BSSID);
+    if(a.i.signal){
+        i->setTextColor(Qt::black);
+        QString s;
+        s.setNum(a.i.signal);
+        i->setText(i->text() + " @ " + s + "%");
+    }
+    else
+      i->setTextColor(Qt::gray);
     ui->listWidget->addItem(i);
     if(i->toolTip() == ui->label_ssNa->text() && i->whatsThis() == ui->label_bsAd->text())
       ui->listWidget->setCurrentItem(i);
@@ -55,6 +121,14 @@ void MainWindow::actualizeList(){
         ii->setText("  (" + QString(aa.id.BSSID) + ")");
         ii->setToolTip(aa.id.SSID);
         ii->setWhatsThis(aa.id.BSSID);
+        if(aa.i.signal){
+          ii->setTextColor(Qt::black);
+          QString s;
+          s.setNum(aa.i.signal);
+          ii->setText(ii->text() + " @ " + s + "%");
+        }
+        else
+          ii->setTextColor(Qt::gray);
         ui->listWidget->addItem(ii);
         if(ii->toolTip() == ui->label_ssNa->text() && ii->whatsThis() == ui->label_bsAd->text())
           ui->listWidget->setCurrentItem(ii);
