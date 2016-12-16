@@ -29,9 +29,9 @@ QList<allWifiInfo_t> importData(QString filename){
         for(int i = 0; i < 2; i++){
           x.readNextStartElement();
           if(x.name() == "firstSeen")
-            current.t.first = QDateTime::fromString(x.readElementText(), Qt::ISODate);
+            current.t.first = QDateTime::fromString(x.readElementText(), Qt::ISODate).toLocalTime();
           else if(x.name() == "lastSeen")
-            current.t.last = QDateTime::fromString(x.readElementText(), Qt::ISODate);
+            current.t.last = QDateTime::fromString(x.readElementText(), Qt::ISODate).toLocalTime();
           x.readNext();
         }
 

@@ -11,7 +11,14 @@ int isSameWifi(allWifiInfo_t le, wifiInfo_t ae){
 
 // Funkcia pre usporiadanie listu typu allWifiInfo_t quicksortom (dalo by sa to prerobit na sablonu)
 int moreThan(allWifiInfo_t &a, allWifiInfo_t &b){
-  return a.i.signal > b.i.signal;
+  if(a.i.signal > 0 || b.i.signal > 0) // 1. signal (viac = lepsie)
+    return a.i.signal > b.i.signal;
+  else if(a.t.last != b.t.last)        // 2. cas kedy boli naposledy videne (viac = lepsie)
+    return a.t.last > b.t.last;
+  else if(strcmp(a.id.SSID,b.id.SSID)) // 3. SSID (abecedne, viac = horsie)
+    return strcmp(a.id.SSID,b.id.SSID) > 0;
+  return strcmp(a.id.BSSID,b.id.BSSID) < 0; // 4. BSSID
+
 }
 
 // Nastavi signal a kanal v aktualnom stave a aktualny cas ako moment, kedy bolo naposledy wifi videne

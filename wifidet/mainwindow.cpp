@@ -179,6 +179,7 @@ void MainWindow::on_speedSlider_sliderMoved(int position)
 
 void MainWindow::on_listView_viewportEntered(){}
 void MainWindow::on_listWidget_activated(const QModelIndex &index){}
+//void MainWindow::on_listView_viewportEntered(){}
 
 
 void MainWindow::on_listWidget_itemSelectionChanged()
