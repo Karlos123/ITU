@@ -33,6 +33,31 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::actualizeList(){
+  ui->listWidget->clear();
+  QStringList p;
+  foreach(allWifiInfo_t a, l){
+    if(p.contains(a.id.SSID))
+      continue;
+    p.append(a.id.SSID);
+    //ui->listWidget->addItem(QString() + "\n  (" + QString(a.id.BSSID) + ")");
+    QListWidgetItem *i = new QListWidgetItem;
+    i->setText(QString(a.id.SSID) + "\n  (" + QString(a.id.BSSID) + ")");
+    i->setToolTip(a.id.SSID);
+    i->setWhatsThis(a.id.BSSID);
+    ui->listWidget->addItem(i);
+    foreach(allWifiInfo_t aa, l){
+      if(!strcmp(a.id.SSID, aa.id.SSID) && strcmp(a.id.BSSID,aa.id.BSSID)){
+        QListWidgetItem *ii = new QListWidgetItem;
+        ii->setText("  (" + QString(aa.id.BSSID) + ")");
+        ii->setToolTip(aa.id.SSID);
+        ii->setWhatsThis(aa.id.BSSID);
+        ui->listWidget->addItem(ii);
+      }
+    }
+  }
+}
+
 /* Detekce a vypis wifi siti */
 void MainWindow::getWifis(){
     QProcess p;
@@ -68,14 +93,16 @@ void MainWindow::getWifis(){
     }
 
     updateWifiList(l, a);
+    actualizeList();
+    //ui->listWidget->repaint();
     //exportData(l);
 
     // Vypis dostupnych wifi
-    foreach(allWifiInfo_t net, l){
+    /*foreach(allWifiInfo_t net, l){
         out = "Name: " + std::string(net.id.SSID) + "\n" + "BSSID: " +net.id.BSSID + "\n" +
                 "Channel: " +std::to_string((int) net.i.channel) + "\n" +  "Siganl strength: " +std::to_string((int) net.i.signal) + "\n";
         ui->textBrowser->append(out.c_str());
-    }
+    }*/
 
 
     // Premisteni kurzoru, pohledu na zacatek
@@ -98,7 +125,7 @@ void MainWindow::on_btnStart_clicked()
     ui->textBrowser->setAlignment(Qt::AlignLeft);
     getWifis(); // Ziskani wifi siti
     timer->start(interval*1000); // Odpaleni casovace
-
+    ui->textBrowser->hide();
 
 }
 
@@ -144,3 +171,7 @@ void MainWindow::on_speedSlider_sliderMoved(int position)
     ui->lblInterval->setText(QString::fromStdString(std::to_string(interval) + " s"));
 
 }
+
+void MainWindow::on_listView_viewportEntered(){}
+void MainWindow::on_listWidget_activated(const QModelIndex &index){}
+

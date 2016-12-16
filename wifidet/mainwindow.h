@@ -25,7 +25,7 @@ private slots:
 
     void on_actionOptions_triggered();
 
-
+    void actualizeList();
 
     void on_speedSlider_sliderMoved(int position);
 
@@ -34,6 +34,10 @@ private slots:
     void on_btnSave_pressed();
 
     void on_btnSave_clicked();
+
+    void on_listView_viewportEntered();
+
+    void on_listWidget_activated(const QModelIndex &index);
 
 private:
     Ui::MainWindow *ui;

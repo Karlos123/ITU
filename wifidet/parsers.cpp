@@ -11,16 +11,16 @@ int getNetworks_nmcli(QProcess &p, QList<wifiInfo_t> &l){
     return 0;
   nets.removeFirst();
   foreach(QString row, nets){
-    QString buffer = row.section(' ', 0, 0, QString::SectionSkipEmpty);
+    QString buffer = row.section(' ', 0, -4, QString::SectionSkipEmpty);
     //if(buffer == "SSID") // Prvy riadok, preskocime ho
     //  continue;
     wifiInfo_t w;
     strcpy(w.id.SSID, buffer.toStdString().data());
-    buffer = row.section(' ', 1, 1, QString::SectionSkipEmpty);
+    buffer = row.section(' ', -3, -3, QString::SectionSkipEmpty);
     strcpy(w.id.BSSID, buffer.toStdString().data());
-    buffer = row.section(' ', 2, 2, QString::SectionSkipEmpty);
+    buffer = row.section(' ', -2, -2, QString::SectionSkipEmpty);
     w.i.channel = buffer.toUInt();
-    buffer = row.section(' ', 3, 3, QString::SectionSkipEmpty);
+    buffer = row.section(' ', -1, -1, QString::SectionSkipEmpty);
     w.i.signal = buffer.toUInt();
 
     wifiListInsert(l, w);
