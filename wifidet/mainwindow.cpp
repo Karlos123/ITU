@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(getWifis()));
+    ui->widget->hide();
 }
 
 MainWindow::~MainWindow()
@@ -46,6 +47,8 @@ void MainWindow::actualizeList(){
     i->setToolTip(a.id.SSID);
     i->setWhatsThis(a.id.BSSID);
     ui->listWidget->addItem(i);
+    if(i->toolTip() == ui->label_ssNa->text() && i->whatsThis() == ui->label_bsAd->text())
+      ui->listWidget->setCurrentItem(i);
     foreach(allWifiInfo_t aa, l){
       if(!strcmp(a.id.SSID, aa.id.SSID) && strcmp(a.id.BSSID,aa.id.BSSID)){
         QListWidgetItem *ii = new QListWidgetItem;
@@ -53,6 +56,8 @@ void MainWindow::actualizeList(){
         ii->setToolTip(aa.id.SSID);
         ii->setWhatsThis(aa.id.BSSID);
         ui->listWidget->addItem(ii);
+        if(ii->toolTip() == ui->label_ssNa->text() && ii->whatsThis() == ui->label_bsAd->text())
+          ui->listWidget->setCurrentItem(ii);
       }
     }
   }
@@ -175,3 +180,29 @@ void MainWindow::on_speedSlider_sliderMoved(int position)
 void MainWindow::on_listView_viewportEntered(){}
 void MainWindow::on_listWidget_activated(const QModelIndex &index){}
 
+
+void MainWindow::on_listWidget_itemSelectionChanged()
+{
+  foreach(allWifiInfo_t e, l){
+    if(ui->listWidget->currentItem()->toolTip() == e.id.SSID && ui->listWidget->currentItem()->whatsThis() == e.id.BSSID){
+      ui->label_ssNa->setText(e.id.SSID);
+      ui->label_bsAd->setText(e.id.BSSID);
+      QString s;
+      if(e.i.signal){
+        s.setNum(e.i.signal);
+        ui->label_sgNo->setText(s + "%");
+      }
+      else ui->label_sgNo->setText("N/A");
+      if(e.i.channel){
+        s.setNum(e.i.channel);
+        ui->label_chNo->setText(s);
+      }
+      else ui->label_chNo->setText("N/A");
+      ui->label_fsT->setText(e.t.first.toString("d. MMM yyyy, HH:mm"));
+      ui->label_lsT->setText(e.t.last.toString("d. MMM yyyy, HH:mm"));
+
+      ui->widget->show();
+      break;
+    }
+  }
+}

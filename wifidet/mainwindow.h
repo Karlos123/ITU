@@ -39,6 +39,8 @@ private slots:
 
     void on_listWidget_activated(const QModelIndex &index);
 
+    void on_listWidget_itemSelectionChanged();
+
 private:
     Ui::MainWindow *ui;
     QList <struct allWifiInfo> l;
