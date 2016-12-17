@@ -64,8 +64,14 @@ void MainWindow::clearNetworks(){
 }
 
 void MainWindow::about(){
-  QMessageBox::about(this, tr("About..."),
-          tr("Nejaky <b>shitpost</b> o autoroch, projekte etc."));
+      QMessageBox::about(this, tr("About..."),
+              tr("<b>Brief info:</b><br>"
+                 "WiFiDeT was created as a project to User Interface Programming subject at Brno University of Technology "
+                 "(Faculty of Inforamtion Technologies). "
+                 "Main purpose of WiFiDeT is to capture wifi networs around the current station it is running on."
+                 "<br>"
+                 "<b>Authors:</b><br>"
+                 "Andrej Barna and Karel Jiranek"));
 }
 
 void MainWindow::createActions(){
@@ -266,6 +272,21 @@ void MainWindow::on_listWidget_itemSelectionChanged()
       if(e.i.signal){
         s.setNum(e.i.signal);
         ui->label_sgNo->setText(s + "%");
+        if(e.i.signal >= 70){
+            ui->label_sgIcoHig->show();
+            ui->label_sgIcoMed->hide();
+            ui->label_sgIcoLow->hide();
+        }
+        else if(e.i.signal >= 50){
+            ui->label_sgIcoHig->hide();
+            ui->label_sgIcoMed->show();
+            ui->label_sgIcoLow->hide();
+        }
+        else{
+            ui->label_sgIcoHig->hide();
+            ui->label_sgIcoMed->hide();
+            ui->label_sgIcoLow->show();
+        }
       }
       else ui->label_sgNo->setText("N/A");
       if(e.i.channel){

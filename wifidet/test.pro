@@ -14,13 +14,20 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    parsers.cpp
+    parsers.cpp \
+    impexp.cpp \
+    wifilist.cpp
 
 HEADERS  += mainwindow.h \
-    parsers.h
+    parsers.h \
+    impexp.h \
+    wifilist.h
 
 FORMS    += mainwindow.ui
 
 CONFIG += c++11
 
-DISTFILES +=
+DISTFILES += \
+    ../signalMedium.png \
+    ../signalLow.png \
+    ../signalHigh.png
