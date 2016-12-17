@@ -27,7 +27,5 @@ FORMS    += mainwindow.ui
 
 CONFIG += c++11
 
-DISTFILES += \
-    ../signalMedium.png \
-    ../signalLow.png \
-    ../signalHigh.png
+RESOURCES += \
+    sigicons.qrc

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>signalHigh.png</file>
+        <file>signalLow.png</file>
+        <file>signalMedium.png</file>
+    </qresource>
+</RCC>

@@ -244,11 +244,6 @@ void MainWindow::on_btnSave_clicked()
   }
 }
 
-void MainWindow::on_actionOptions_triggered(){}
-
-void MainWindow::on_btnSave_pressed(){}
-
-
 /* Zmena velikosti intervalu detekce wifi siti */
 void MainWindow::on_speedSlider_sliderMoved(int position)
 {
@@ -257,43 +252,35 @@ void MainWindow::on_speedSlider_sliderMoved(int position)
 
 }
 
-void MainWindow::on_listView_viewportEntered(){}
-void MainWindow::on_listWidget_activated(const QModelIndex &index){}
-//void MainWindow::on_listView_viewportEntered(){}
-
-
-void MainWindow::on_listWidget_itemSelectionChanged()
-{
+void MainWindow::on_listWidget_itemSelectionChanged(){
   foreach(allWifiInfo_t e, l){
     if(ui->listWidget->currentItem()->toolTip() == e.id.SSID && ui->listWidget->currentItem()->whatsThis() == e.id.BSSID){
       ui->label_ssNa->setText(e.id.SSID);
       ui->label_bsAd->setText(e.id.BSSID);
+
+      ui->label_sgIcoHig->hide();
+      ui->label_sgIcoMed->hide();
+      ui->label_sgIcoLow->hide();
       QString s;
       if(e.i.signal){
         s.setNum(e.i.signal);
         ui->label_sgNo->setText(s + "%");
-        if(e.i.signal >= 70){
-            ui->label_sgIcoHig->show();
-            ui->label_sgIcoMed->hide();
-            ui->label_sgIcoLow->hide();
-        }
-        else if(e.i.signal >= 50){
-            ui->label_sgIcoHig->hide();
-            ui->label_sgIcoMed->show();
-            ui->label_sgIcoLow->hide();
-        }
-        else{
-            ui->label_sgIcoHig->hide();
-            ui->label_sgIcoMed->hide();
-            ui->label_sgIcoLow->show();
-        }
+        if(e.i.signal >= 70)
+          ui->label_sgIcoHig->show();
+        else if(e.i.signal >= 40)
+          ui->label_sgIcoMed->show();
+        else
+          ui->label_sgIcoLow->show();
       }
-      else ui->label_sgNo->setText("N/A");
+      else
+        ui->label_sgNo->setText("N/A");
+
       if(e.i.channel){
         s.setNum(e.i.channel);
         ui->label_chNo->setText(s);
       }
       else ui->label_chNo->setText("N/A");
+
       ui->label_fsT->setText(e.t.first.toString("d. MMM yyyy, HH:mm"));
       ui->label_lsT->setText(e.t.last.toString("d. MMM yyyy, HH:mm"));
 
