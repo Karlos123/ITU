@@ -4,10 +4,10 @@
 #include <QProcess>
 #include "wifilist.h"
 
-// Parsovanie vystupu z nmcli
+// Output parsing from the nmcli command
 int getNetworks_nmcli(QProcess &p, QList<wifiInfo_t> &l);
 
-// Parsovanie vystupu z iwlist
+// Output parsing from the iwlist command
 int getNetworks_iwlist(QProcess &p, QList<wifiInfo_t> &l);
 
 #endif // PARSERS_H

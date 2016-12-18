@@ -7,8 +7,8 @@
 #include <string.h>
 
 typedef struct {
-  char SSID[33];  // Nazov WiFi
-  char BSSID[18]; // MAC -- nema zmysel ich prekladat do normalnej 6bajtovej podoby, aj tak to len vypiseme
+  char SSID[33];  // WiFi name
+  char BSSID[18]; // WiFi hotspot MAC address
 } ids_t; // IDs
 
 typedef struct {
@@ -17,28 +17,26 @@ typedef struct {
 } tseen_t; // Time Seen
 
 typedef struct {
-  char channel;   // Cislo kanalu
-  char signal;    // Sila signalu
-  //bool active;
+  char channel;   // Channel number
+  char signal;    // Signal strength in %
+  //bool active; -- other possible informations about the network
 } awi_t; // Available WiFi Info
 
+// Informations about currently available networks
 typedef struct wifiInfo {
   ids_t id;
   awi_t i;
 } wifiInfo_t;
 
+// All information about the networks
 typedef struct allWifiInfo{
   ids_t id;
   tseen_t t;
   awi_t i;
 } allWifiInfo_t;
 
-typedef struct {
-  ids_t id;
-  tseen_t t;
-} exportData_t;
 
-//template<typename T>int wifiListInsert(QList<T&> &l, T& w);
+// Inserts a list element into the list
 template<typename T>
 int wifiListInsert(QList<T> &l, T w){
   if(l.empty() || w.i.signal <= l.last().i.signal){
@@ -56,7 +54,10 @@ int wifiListInsert(QList<T> &l, T w){
   return 0;
 }
 
+// Function used to sort the list of all networks
 int sortAWLf(allWifiInfo_t &a, allWifiInfo_t &b);
+
+// Updates the list of all networks depending on the list of currently available networks
 int updateWifiList(QList<allWifiInfo_t> &l, QList<wifiInfo_t> &a);
 
 #endif // WIFILIST_H

@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    // Upper toolbar Menus and Buttons
     QMenu *networksMenu;
     QMenu *aboutMenu;
     QAction *importAct;
@@ -24,20 +25,20 @@ public:
     ~MainWindow();
 
 private slots:
+    // UI elements' reactions
     void on_btnStart_clicked();
-
     void on_btnPause_clicked();
-
-    void actualizeList();
-
+    void on_btnSave_clicked();
     void on_speedSlider_sliderMoved(int position);
 
-    void getWifis();
+    // Updates the list of networks
+    void getWifis(); 
+    void updateList();
 
-    void on_btnSave_clicked();
-
+    // Prints info about the selected network
     void on_listWidget_itemSelectionChanged();
 
+    // Toolbar buttons' handlers
     void importNetworks();
     void clearNetworks();
     void about();

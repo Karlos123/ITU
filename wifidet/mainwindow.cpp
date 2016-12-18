@@ -13,19 +13,20 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-int interval = 15; // Casovy usek mezi jednotlivymi detekcemi wifi siti
+int interval = 15; // Time interval between detections
 QTimer *timer;
-int detectCount = 1; // Pocet detekovani wifi siti
+//int detectCount = 1; // Count of detections
 
-void getWifis();
-
+// Constructor of the windows, initializes necessary components
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    // Attempts to import the stored history with the default name ".wifidetHistory.xml"
     l = importData();
     ui->setupUi(this);
 
+    // Toolbar initialization
     createActions();
     createMenus();
 
@@ -34,46 +35,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget->hide();
 }
 
+// Destructor
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void MainWindow::importNetworks(){
-  QMessageBox::information(this, tr("Import"),
-          tr("Importing the list of networks removes\ncurrently recorded networks."));
+// Initializes the menus on the upper toolbar
+void MainWindow::createMenus(){
+  networksMenu = menuBar()->addMenu(tr("&Networks"));
+  networksMenu->addAction(importAct);
+  networksMenu->addAction(clearAct);
 
-  QString fileName = QFileDialog::getOpenFileName(NULL, tr("Import networks..."), ".wifidetHistory.xml", tr("XML Files (*.xml)"));
-
-  if(fileName.isNull())
-    return;
-  l = importData(fileName);
-  actualizeList();
-  ui->textBrowser->hide();
+  aboutMenu = menuBar()->addMenu(tr("&About"));
+  aboutMenu->addAction(aboutAct);
 }
 
-void MainWindow::clearNetworks(){
-  QMessageBox::StandardButton reply;
-  reply = QMessageBox::question(this, "Clear networks", "Are you sure you want to\n clear the list of networks?",
-                                QMessageBox::No|QMessageBox::Yes);
-  if (reply == QMessageBox::Yes) {
-    l.clear();
-    ui->listWidget->clear();
-    ui->textBrowser->hide();
-  }
-}
-
-void MainWindow::about(){
-      QMessageBox::about(this, tr("About..."),
-              tr("<b>Brief info:</b><br>"
-                 "WiFiDeT was created as a project to User Interface Programming subject at Brno University of Technology "
-                 "(Faculty of Inforamtion Technologies). "
-                 "Main purpose of WiFiDeT is to capture wifi networs around the current station it is running on."
-                 "<br>"
-                 "<b>Authors:</b><br>"
-                 "Andrej Barna and Karel Jiranek"));
-}
-
+// Initializes buttons in the menus on the upper toolbar
 void MainWindow::createActions(){
   importAct = new QAction(tr("&Import..."), this);
   importAct->setStatusTip(tr("Import a list of previously saved networks"));
@@ -88,17 +66,46 @@ void MainWindow::createActions(){
   connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
 }
 
+// Handler of the "Import..." button click, shows a dialogue box to open the file with stored history
+void MainWindow::importNetworks(){
+  QMessageBox::information(this, tr("Import"),
+          tr("Importing the list of networks removes\ncurrently recorded networks."));
 
-void MainWindow::createMenus(){
-  networksMenu = menuBar()->addMenu(tr("&Networks"));
-  networksMenu->addAction(importAct);
-  networksMenu->addAction(clearAct);
+  QString fileName = QFileDialog::getOpenFileName(NULL, tr("Import networks..."), ".wifidetHistory.xml", tr("XML Files (*.xml)"));
 
-  aboutMenu = menuBar()->addMenu(tr("&About"));
-  aboutMenu->addAction(aboutAct);
+  if(fileName.isNull())
+    return;
+  l = importData(fileName);
+  updateList();
+  ui->textBrowser->hide();
 }
 
-void MainWindow::actualizeList(){
+// Removes all the networks from the list
+void MainWindow::clearNetworks(){
+  QMessageBox::StandardButton reply;
+  reply = QMessageBox::question(this, "Clear networks", "Are you sure you want to\n clear the list of networks?",
+                                QMessageBox::No|QMessageBox::Yes);
+  if (reply == QMessageBox::Yes) {
+    l.clear();
+    ui->listWidget->clear();
+    ui->textBrowser->hide();
+  }
+}
+
+// Prints some basic information about the application
+void MainWindow::about(){
+      QMessageBox::about(this, tr("About..."),
+              tr("<b>Brief info:</b><br>"
+                 "WiFiDeT was created as a project to User Interface Programming subject at Brno University of Technology "
+                 "(Faculty of Inforamtion Technologies). "
+                 "Main purpose of WiFiDeT is to capture wifi networs around the current station it is running on."
+                 "<br>"
+                 "<b>Authors:</b><br>"
+                 "Andrej Barna and Karel Jiranek"));
+}
+
+// Updates the list of networks in the UI
+void MainWindow::updateList(){
   ui->listWidget->clear();
   QStringList p;
   foreach(allWifiInfo_t a, l){
@@ -143,25 +150,23 @@ void MainWindow::actualizeList(){
   }
 }
 
-/* Detekce a vypis wifi siti */
+// Detection of the networks, updating of the list of all networks and updating
+// of the list in the UI
 void MainWindow::getWifis(){
     QProcess p;
     QList <struct wifiInfo> a;
-    std::string out; // Zprava na vypsani
+    std::string out; // Output message
 
-    // \/ vlozit do konstruktoru?
-    //QList<allWifiInfo_t> *lul = importData();
-    //delete lul;
-    ui->textBrowser->clear(); // Vycisteni okna
+    //ui->textBrowser->clear(); // Clearing of the output box
 
-    // Vypsani hlavicky vypisu
-    ui->textBrowser->setAlignment(Qt::AlignCenter);
+    // Printing of the output header
+    /*ui->textBrowser->setAlignment(Qt::AlignCenter);
     out = "Detection number: " + std::to_string(detectCount) + "\n";
     ui->textBrowser->append(out.c_str());
-    detectCount++; // Navyseni poctu detekci
-    ui->textBrowser->setAlignment(Qt::AlignLeft);
+    detectCount++; // Increase the count of detections
+    ui->textBrowser->setAlignment(Qt::AlignLeft);*/
 
-    // Detekce wifi
+    // Detects wifi networks
     p.setProcessChannelMode(QProcess::MergedChannels);
     p.start("nmcli", QStringList() << "-f" << "SSID,BSSID,CHAN,SIGNAL" << "dev" << "wifi");
     p.waitForFinished();
@@ -169,7 +174,7 @@ void MainWindow::getWifis(){
       p.start("sudo", QStringList() << "iwlist" << "scan");
       p.waitForFinished();
       if(p.exitCode()){
-        return; // nema superuser opravnenia, nezadal heslo, whatever, moze sa ist .........
+        return; // Command couldn't have been executed, probably user doesn't have root privileges?
       }
       getNetworks_iwlist(p, a);
     }
@@ -178,31 +183,25 @@ void MainWindow::getWifis(){
     }
 
     updateWifiList(l, a);
-    actualizeList();
-    //ui->listWidget->repaint();
-    //exportData(l);
+    updateList();
 
-    // Vypis dostupnych wifi
+    // Print of all available networks in the output box
     /*foreach(allWifiInfo_t net, l){
         out = "Name: " + std::string(net.id.SSID) + "\n" + "BSSID: " +net.id.BSSID + "\n" +
                 "Channel: " +std::to_string((int) net.i.channel) + "\n" +  "Siganl strength: " +std::to_string((int) net.i.signal) + "\n";
         ui->textBrowser->append(out.c_str());
-    }*/
+    }
 
 
-    // Premisteni kurzoru, pohledu na zacatek
+    // Moves the cursor to the beginning and shows the beginning of the text in the output box
     QTextCursor cursor = ui->textBrowser->textCursor();
     cursor.setPosition(0);
-    ui->textBrowser->setTextCursor(cursor);
-
-
-
+    ui->textBrowser->setTextCursor(cursor);*/
 }
 
-/* Tlacitko START */
+// Start button handler
 void MainWindow::on_btnStart_clicked()
 {
-
     ui->btnPause->setEnabled(true);
     ui->btnStart->setEnabled(false);
     ui->btnSave->setEnabled(false);
@@ -214,44 +213,43 @@ void MainWindow::on_btnStart_clicked()
 
 }
 
-/* Tlacitko PAUSE */
+// Pause button handler
 void MainWindow::on_btnPause_clicked()
 {
-    timer->stop(); // Zastaveni casovace
-    detectCount = 1;
+    timer->stop(); // Stops the timer
+    //detectCount = 1;
     ui->btnPause->setEnabled(false);
     ui->btnSave->setEnabled(true);
     ui->btnStart->setEnabled(true);
     ui->speedSlider->setEnabled(true);
 }
 
-
+// Save button handler, opens up the dialog box to save the current list
+// Default filename is the name of autoloaded file
 void MainWindow::on_btnSave_clicked()
 {
-
   QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save History..."), ".wifidetHistory.xml", tr("XML Files (*.xml)")); // ;;All Files(*.*)
 
-  // Aktualne to dookola ponuka ulozenie hry kym sa ju nepodari ulozit, alebo uzivatel neda Cancel
   if(fileName.isNull()){
     return;
   }
   else{
     if(!fileName.endsWith(".xml"))
       fileName += ".xml";
-    if(exportData(l,fileName)){ // Nedalo sa ulozit hru or sth
+    if(exportData(l,fileName)){
         on_btnSave_clicked();
     }
   }
 }
 
-/* Zmena velikosti intervalu detekce wifi siti */
+// Change of network detection interval handling
 void MainWindow::on_speedSlider_sliderMoved(int position)
 {
     interval = position;
     ui->lblInterval->setText(QString::fromStdString(std::to_string(interval) + " s"));
-
 }
 
+// Updates the information about the selected network
 void MainWindow::on_listWidget_itemSelectionChanged(){
   foreach(allWifiInfo_t e, l){
     if(ui->listWidget->currentItem()->toolTip() == e.id.SSID && ui->listWidget->currentItem()->whatsThis() == e.id.BSSID){

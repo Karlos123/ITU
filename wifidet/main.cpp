@@ -11,9 +11,6 @@ int main(int argc, char *argv[])
     w.setStyleSheet("QMainWindow {background: '#DEDEFF';}");
     w.show();
 
-
-
-
     return a.exec();
 }
 
